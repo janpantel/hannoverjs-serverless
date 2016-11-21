@@ -18,6 +18,12 @@ functions:
         - http:
             path: meetup
             method: post
+  getAllMeetups:
+    handler: handler.getAllMeetups
+    events:
+        - http:
+            path: meetup
+            method: get
 
 resources:
     Resources:

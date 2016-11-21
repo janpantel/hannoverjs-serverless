@@ -28,3 +28,13 @@ module.exports.createMeetup = (event, context, callback) => {
         return callback(null, { statusCode: 200, body: JSON.stringify(meetup) });
     });
 };
+
+module.exports.getAllMeetups = (event, context, callback) => {
+    dynamo.scan({ TableName: "meetups" }, (err, data) => {
+        if (err) {
+            console.log("error getting all meetups: ", err);
+            return callback(err);
+        }
+        return callback(null, { statusCode: 200, body: JSON.stringify({ items: data.Items }) });
+    });
+};
