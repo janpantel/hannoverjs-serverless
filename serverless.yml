@@ -6,9 +6,18 @@ provider:
   stage: dev
   region: eu-west-1
 
+package:
+    exclude:
+        - "node_modules/**"
+        - "!node_modules/uuid/**"
+
 functions:
-  hello:
-    handler: handler.hello
+  createMeetup:
+    handler: handler.createMeetup
+    events:
+        - http:
+            path: meetup
+            method: post
 
 resources:
     Resources:
