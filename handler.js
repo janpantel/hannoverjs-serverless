@@ -56,3 +56,40 @@ module.exports.getMeetupById = (event, context, callback) => {
         return callback(null, { statusCode: 200, body: JSON.stringify(data.Item) });
     });
 };
+
+module.exports.createSpeaker = (event, context, callback) => {
+    const data = JSON.parse(event.body) || {};
+    const meetupId = event.pathParameters.id;
+    const name = data.name;
+    const title = data.title;
+    const email = data.email;
+
+    if (!meetupId) {
+        return callback(null, { statusCode: 400, body: 'Missing meetup id' });
+    } else if (!name) {
+        return callback(null, { statusCode: 400, body: 'Missing name' });
+    } else if (!title) {
+        return callback(null, { statusCode: 400, body: 'Missing title' });
+    } else if (!email) {
+        return callback(null, { statusCode: 400, body: 'Missing email' });
+    }
+
+    const speaker = {
+        id: uuid(),
+        meetup_id: meetupId,
+        name: name,
+        title: title,
+        email: email
+    };
+
+    // If this was a real app you might want to check if the meetup id is existing in the meetups
+    // table and if the email isn't registered yet. In sake of demo we will skip this for now.
+
+    dynamo.put({ TableName: 'speakers', Item: speaker }, (err) => {
+        if (err) {
+            console.log('error writing speaker: ', err);
+            return callback(err);
+        }
+        return callback(null, { statusCode: 200, body: JSON.stringify(speaker) });
+    });
+};
