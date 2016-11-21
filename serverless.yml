@@ -1,4 +1,4 @@
-service: aws-nodejs
+service: hjs-serverless
 
 provider:
   name: aws
@@ -9,3 +9,35 @@ provider:
 functions:
   hello:
     handler: handler.hello
+
+resources:
+    Resources:
+        MeetupsTable:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: meetups
+            AttributeDefinitions:
+              - AttributeName: id
+                AttributeType: S
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        MeetupsTableIAMPolicy:
+          Type: AWS::IAM::Policy
+          DependsOn: MeetupsTable
+          Properties:
+            PolicyName: meetups-table-lambda-dynamodb
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:GetItem
+                    - dynamodb:PutItem
+                    - dynamodb:Scan
+                  Resource: arn:aws:dynamodb:*:*:table/meetups
+            Roles:
+                - Ref: IamRoleLambdaExecution
