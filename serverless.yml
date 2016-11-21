@@ -24,6 +24,12 @@ functions:
         - http:
             path: meetup
             method: get
+  getMeetupById:
+    handler: handler.getMeetupById
+    events:
+        - http:
+            path: meetup/{id}
+            method: get
 
 resources:
     Resources:

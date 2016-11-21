@@ -38,3 +38,21 @@ module.exports.getAllMeetups = (event, context, callback) => {
         return callback(null, { statusCode: 200, body: JSON.stringify({ items: data.Items }) });
     });
 };
+
+module.exports.getMeetupById = (event, context, callback) => {
+    const id = event.pathParameters.id;
+    if (!id) {
+        return callback(null, { statusCode: 400, body: "Missing id" });
+    }
+
+    dynamo.get({ TableName: "meetups", Key: { id: id } }, (err, data) => {
+        if (err) {
+            console.log("error reading meetup by id: ", err);
+            return callback(err);
+        }
+        if (!data.Item) {
+            return callback(null, { statusCode: 404, body: "Not found" });
+        }
+        return callback(null, { statusCode: 200, body: JSON.stringify(data.Item) });
+    });
+};
