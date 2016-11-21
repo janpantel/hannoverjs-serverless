@@ -62,3 +62,55 @@ resources:
                   Resource: arn:aws:dynamodb:*:*:table/meetups
             Roles:
                 - Ref: IamRoleLambdaExecution
+        SpeakerTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: speakers
+                AttributeDefinitions:
+                    - AttributeName: id
+                      AttributeType: S
+                    - AttributeName: meetup_id
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: id
+                      KeyType: HASH
+                    - AttributeName: meetup_id
+                      KeyType: RANGE
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 1
+                    WriteCapacityUnits: 1
+                StreamSpecification:
+                    StreamViewType: NEW_IMAGE
+        SpeakerTableIamPolicy:
+            Type: AWS::IAM::Policy
+            DependsOn: SpeakerTable
+            Properties:
+                PolicyName: speakers-table-access
+                PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                        - Effect: Allow
+                          Action:
+                            - dynamodb:GetItem
+                            - dynamodb:PutItem
+                            - dynamodb:Scan
+                          Resource: arn:aws:dynamodb:*:*:table/speakers
+                Roles:
+                    - Ref: IamRoleLambdaExecution
+        SpeakersStreamIamPolicy:
+            Type: AWS::IAM::Policy
+            DependsOn: SpeakerTable
+            Properties:
+                PolicyName: speakers-stream-access
+                PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                        - Effect: Allow
+                          Action:
+                            - dynamodb:DescribeStream
+                            - dynamodb:GetRecords
+                            - dynamodb:GetShardIterator
+                            - dynamodb:ListStreams
+                          Resource: arn:aws:dynamodb:eu-west-1:*:table/speakers/stream/*
+                Roles:
+                    - Ref: IamRoleLambdaExecution
