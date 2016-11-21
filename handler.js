@@ -93,3 +93,31 @@ module.exports.createSpeaker = (event, context, callback) => {
         return callback(null, { statusCode: 200, body: JSON.stringify(speaker) });
     });
 };
+
+module.exports.getSpeakersByMeetup = (event, context, callback) => {
+    const meetupId = event.pathParameters.id;
+
+    if (!meetupId) {
+        return callback(null, { statusCode: 400, body: 'Missing meetup id' });
+    }
+
+    dynamo.scan({
+        TableName: 'speakers',
+        FilterExpression: "#mi = :mi",
+        ExpressionAttributeNames: {
+            "#mi": "meetup_id",
+        },
+        ExpressionAttributeValues: {
+             ":mi": meetupId
+        }
+    }, (err, data) => {
+        if (err) {
+            console.log('error getting speakers for meetup: ', err);
+            return callback(err);
+        }
+        if (data.Items.length === 0) {
+            return callback(null, { statusCode: 404, body: 'Not found!' });
+        }
+        return callback(null, { statusCode: 200, body: JSON.stringify({ items: data.Items }) });
+    });
+};

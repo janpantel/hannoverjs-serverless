@@ -36,6 +36,12 @@ functions:
         - http:
             path: meetup/{id}/speaker
             method: post
+  getSpeakersByMeetup:
+    handler: handler.getSpeakersByMeetup
+    events:
+        - http:
+            path: meetup/{id}/speaker
+            method: get
 resources:
     Resources:
         MeetupsTable:
