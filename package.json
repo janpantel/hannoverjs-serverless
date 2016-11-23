@@ -1,0 +1,19 @@
+{
+  "name": "sls_hjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^3.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "fetch": "^1.1.0",
+    "url-join": "^1.1.0"
+  }
+}
