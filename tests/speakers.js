@@ -93,3 +93,37 @@ test.cb('speakers can be created', t => {
         }
     );
 });
+
+test.cb('speakers by meetup returns 404', t => {
+    fetch(tools.apiUrl('/meetup/wrong_meetup_id/speaker'), (err, meta, body) => {
+        t.ifError(err, 'error during speaker retrieval');
+        t.is(meta.status, 404, body);
+        t.end();
+    });
+});
+
+test.cb('speakers can be retrieved by meetup', t => {
+    const speaker = {
+        name: 'JOP',
+        title: 'Serverless rocks!',
+        email: email
+    };
+    fetch(
+        tools.apiUrl('/meetup/' + meetupId + '/speaker'),
+        { method: 'POST', payload: JSON.stringify(speaker) },
+        (err, meta, body) => {
+            t.ifError(err, "error executing speaker creation");
+            t.is(meta.status, 200);
+            const payload = JSON.parse(body) || {};
+
+            fetch(tools.apiUrl('/meetup/' + meetupId + '/speaker'), (err, meta, body) => {
+                t.ifError(err, "error during speaker retrieval");
+                t.is(meta.status, 200);
+                const speakers = JSON.parse(body) || {};
+                t.truthy(speakers.items.length, 'missing speakers');
+
+                t.end();
+            });
+        }
+    );
+});
