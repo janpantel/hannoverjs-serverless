@@ -56,3 +56,42 @@ test.cb('meetups list can be retrieved', t => {
         });
     });
 });
+
+test.cb('meetups by id fails with 404', t => {
+    fetch(tools.apiUrl('/meetup/this_does_not_exist'), (err, meta, body) => {
+        t.ifError(err, 'error retrieving meetup by id');
+        t.is(meta.status, 404, body);
+
+        t.end();
+    });
+});
+
+test.cb('meetups can be retrieved by id', t => {
+    const meetup = {
+        name: "hannover js",
+        date: "2017-01-01T00:00:00.000Z"
+    };
+    fetch(tools.apiUrl('/meetup'), { method: 'POST', payload: JSON.stringify(meetup) }, (err, meta, body) => {
+        t.ifError(err, "error executing meetup creation");
+        t.is(meta.status, 200, body);
+
+        fetch(tools.apiUrl('/meetup'), (err, meta, body) => {
+            t.ifError(err, 'error retrieving meetup list');
+            t.is(meta.status, 200);
+
+            const payload = JSON.parse(body) || {};
+            t.truthy(payload.items.length, 'not enough items');
+
+            const firstID = payload.items[0].id;
+            fetch(tools.apiUrl('/meetup/' + firstID), (err, meta, body) => {
+                t.ifError(err, 'error retrieving meetup by id');
+                t.is(meta.status, 200);
+
+                const byIdPayload = JSON.parse(body) || {};
+                t.is(firstID, byIdPayload.id);
+
+                t.end();
+            });
+        });
+    });
+});
