@@ -5,11 +5,17 @@ provider:
   runtime: nodejs4.3
   stage: dev
   region: eu-west-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+          - "ses:SendEmail"
+      Resource: "arn:aws:ses:*:*:*/*"
 
 package:
     exclude:
         - "node_modules/**"
         - "!node_modules/uuid/**"
+        - "!node_modules/async/**"
 
 functions:
   createMeetup:
@@ -42,6 +48,13 @@ functions:
         - http:
             path: meetup/{id}/speaker
             method: get
+  sendSpeakersEmail:
+    handler: handler.sendSpeakersEmail
+    events:
+        - stream:
+            arn: "add arn here"
+            batchSize: 1
+
 resources:
     Resources:
         MeetupsTable:
