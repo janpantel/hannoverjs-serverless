@@ -19,37 +19,37 @@ package:
 
 functions:
   createMeetup:
-    handler: handler.createMeetup
+    handler: functions/meetup.createMeetup
     events:
         - http:
             path: meetup
             method: post
   getAllMeetups:
-    handler: handler.getAllMeetups
+    handler: functions/meetup.getAllMeetups
     events:
         - http:
             path: meetup
             method: get
   getMeetupById:
-    handler: handler.getMeetupById
+    handler: functions/meetup.getMeetupById
     events:
         - http:
             path: meetup/{id}
             method: get
   createSpeaker:
-    handler: handler.createSpeaker
+    handler: functions/speaker.createSpeaker
     events:
         - http:
             path: meetup/{id}/speaker
             method: post
   getSpeakersByMeetup:
-    handler: handler.getSpeakersByMeetup
+    handler: functions/speaker.getSpeakersByMeetup
     events:
         - http:
             path: meetup/{id}/speaker
             method: get
   sendSpeakersEmail:
-    handler: handler.sendSpeakersEmail
+    handler: functions/email.sendSpeakersEmail
     events:
         - stream:
             arn: "add arn here"
